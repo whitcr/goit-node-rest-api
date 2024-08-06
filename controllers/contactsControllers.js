@@ -3,6 +3,7 @@ import HttpError from "../helpers/HttpError.js";
 import {
   contactSchema,
   updateContactSchema,
+  updateFavSchema,
 } from "../schemas/contactsSchemas.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
@@ -60,10 +61,31 @@ const updateContact = async (req, res, next) => {
   res.json(result);
 };
 
+const updateStatusContact = async (req, res, next) => {
+  const { error } = updateFavSchema.validate(req.body);
+  if (error) {
+    throw HttpError(400, error.message);
+  }
+
+  const { id } = req.params;
+  const { favorite } = req.body;
+
+  const updatedContact = await contactsService.updateStatusContact(id, {
+    favorite,
+  });
+
+  if (updatedContact) {
+    return res.status(200).json(updatedContact);
+  } else {
+    throw HttpError(400, error.message);
+  }
+};
+
 export default {
   listContacts: ctrlWrapper(listContacts),
   getContactById: ctrlWrapper(getContactById),
   removeContact: ctrlWrapper(removeContact),
   addContact: ctrlWrapper(addContact),
   updateContact: ctrlWrapper(updateContact),
+  updateStatusContact: ctrlWrapper(updateStatusContact),
 };

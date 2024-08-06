@@ -1,52 +1,47 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-
-const contactsPath = path.resolve("db", "contacts.json");
+import User from "../db/models/user.js";
 
 async function listContacts() {
-  const data = await fs.readFile(contactsPath, "utf8");
-  return JSON.parse(data);
+  return User.findAll();
 }
 
 async function getContactById(contactId) {
-  const contacts = await listContacts();
-  return contacts.find((contact) => contact.id === contactId) || null;
+  return User.findByPk(contactId);
 }
 
 async function removeContact(contactId) {
-  const contacts = await listContacts();
-  const contactIndex = contacts.findIndex(
-    (contact) => contact.id === contactId
-  );
-  if (contactIndex === -1) {
-    return null;
-  }
-  const [removedContact] = contacts.splice(contactIndex, 1);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return removedContact;
+  return User.destroy({
+    where: {
+      id: contactId,
+    },
+  });
 }
 
 async function addContact(data) {
-  const contacts = await listContacts();
-  const newContact = { id: String(Date.now()), ...data };
-  contacts.push(newContact);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return newContact;
+  return User.create(data);
 }
 
 async function updateContactById(id, data) {
-  const contacts = await listContacts();
-  const index = contacts.findIndex((item) => item.id === id);
-
-  if (index === -1) {
+  const user = await getContactById(id);
+  if (!user) {
     return null;
   }
+  return user.update(data, {
+    returning: true,
+  });
+}
 
-  contacts[index] = { ...contacts[index], ...data };
+async function updateStatusContact(contactId, { favorite }) {
+  const user = await getContactById(contactId);
 
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-
-  return contacts[index];
+  if (!user) {
+    return null;
+  }
+  return user.update(
+    { favorite },
+    {
+      returning: true,
+    }
+  );
 }
 
 export default {
@@ -55,4 +50,5 @@ export default {
   removeContact,
   addContact,
   updateContactById,
+  updateStatusContact,
 };
