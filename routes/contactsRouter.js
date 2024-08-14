@@ -1,7 +1,10 @@
 import express from "express";
 import contactsControllers from "../controllers/contactsControllers.js";
+import authenticate from "../middlewares/authenticate.js";
 
 const contactsRouter = express.Router();
+
+contactsRouter.use(authenticate);
 
 contactsRouter.get("/", contactsControllers.listContacts);
 
@@ -13,6 +16,6 @@ contactsRouter.post("/", contactsControllers.addContact);
 
 contactsRouter.put("/:id", contactsControllers.updateContact);
 
-contactsRouter.put("/:id/favorite", contactsControllers.updateStatusContact);
+contactsRouter.patch("/:id/favorite", contactsControllers.updateStatusContact);
 
 export default contactsRouter;

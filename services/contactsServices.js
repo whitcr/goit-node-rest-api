@@ -1,27 +1,43 @@
-import User from "../db/models/user.js";
+import Contacts from "../db/models/contacts.js";
+import HttpError from "../helpers/HttpError.js";
 
-async function listContacts() {
-  return User.findAll();
+async function listContacts(
+  query = {},
+  { page = 1, limit = 10 },
+  favorite = False
+) {
+  if (favorite) {
+    query.favorite = "true";
+  }
+
+  const normalizedLimit = Number(limit);
+  const offset = (Number(page) - 1) * normalizedLimit;
+
+  return Contacts.findAll({
+    where: query,
+    offset,
+    limit: normalizedLimit,
+  });
 }
 
-async function getContactById(contactId) {
-  return User.findByPk(contactId);
+async function getContact(query) {
+  return Contacts.findOne({
+    where: query,
+  });
 }
 
-async function removeContact(contactId) {
-  return User.destroy({
-    where: {
-      id: contactId,
-    },
+async function removeContact(query) {
+  return Contacts.destroy({
+    where: query,
   });
 }
 
 async function addContact(data) {
-  return User.create(data);
+  return Contacts.create(data);
 }
 
-async function updateContactById(id, data) {
-  const user = await getContactById(id);
+async function updateContactById(query, data) {
+  const user = await getContact(query);
   if (!user) {
     return null;
   }
@@ -30,11 +46,11 @@ async function updateContactById(id, data) {
   });
 }
 
-async function updateStatusContact(contactId, { favorite }) {
-  const user = await getContactById(contactId);
+async function updateStatusContact(query, { favorite }) {
+  const user = await getContact(query);
 
   if (!user) {
-    return null;
+    throw HttpError(404);
   }
   return user.update(
     { favorite },
@@ -46,7 +62,7 @@ async function updateStatusContact(contactId, { favorite }) {
 
 export default {
   listContacts,
-  getContactById,
+  getContact,
   removeContact,
   addContact,
   updateContactById,

@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 
 import sequelize from "../sequelize.js";
 
-const User = sequelize.define("contacts", {
+const Contacts = sequelize.define("contacts", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -19,8 +19,10 @@ const User = sequelize.define("contacts", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  owner: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
-User.sync();
-
-export default User;
+export default Contacts;

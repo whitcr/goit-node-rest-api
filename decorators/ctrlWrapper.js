@@ -1,12 +1,20 @@
 import { ValidationError } from "sequelize";
+import HttpError from "../helpers/HttpError.js";
 
 const ctrlWrapper = (fn) => {
   const func = async (req, res, next) => {
     try {
       await fn(req, res, next);
     } catch (error) {
+      console.log(error);
+      if (error?.parent?.code === "23505") {
+        return next(HttpError(409, "Email in use"));
+      }
+      console.log(error);
       if (error instanceof ValidationError) {
-        return next(HttpError(400, error.message));
+        return next(
+          HttpError(400, "Помилка від Joi або іншої бібліотеки валідації")
+        );
       }
       next(error);
     }
