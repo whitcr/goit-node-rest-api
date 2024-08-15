@@ -54,7 +54,7 @@ const logout = async (req, res) => {
   const { id } = req.user;
   await authServices.updateUser({ id }, { token: "" });
 
-  res.status(204);
+  res.status(204).json();
 };
 
 const getCurrent = async (req, res) => {

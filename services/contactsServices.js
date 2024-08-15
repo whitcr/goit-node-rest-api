@@ -4,7 +4,7 @@ import HttpError from "../helpers/HttpError.js";
 async function listContacts(
   query = {},
   { page = 1, limit = 10 },
-  favorite = False
+  favorite = false
 ) {
   if (favorite) {
     query.favorite = "true";
