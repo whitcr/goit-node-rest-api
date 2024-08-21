@@ -23,8 +23,8 @@ authRouter.get("/current", authenticate, authControllers.getCurrent);
 
 authRouter.patch(
   "/avatars",
-  upload.single("avatarURL"),
   authenticate,
+  upload.single("avatarURL"),
   authControllers.updateAvatar
 );
 
