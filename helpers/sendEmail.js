@@ -22,10 +22,3 @@ const sendEmail = (data) => {
 };
 
 export default sendEmail;
-
-// const emailOptions = {
-//   from: "goitnodejs@meta.ua",
-//   to: "noresponse@gmail.com",
-//   subject: "Nodemailer test",
-//   text: "Привіт. Ми тестуємо надсилання листів!",
-// };
