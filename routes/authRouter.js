@@ -6,14 +6,24 @@ import authenticate from "../middlewares/authenticate.js";
 
 import validateBody from "../helpers/validateBody.js";
 
-import { authSchema, updateSubSchema } from "../schemas/authSchemas.js";
+import {
+  authSchema,
+  updateSubSchema,
+  authEmailSchema,
+} from "../schemas/authSchemas.js";
 import upload from "../middlewares/upload.js";
 
 const authRouter = express.Router();
 
+const verifyEmailMiddleware = validateBody(authEmailSchema);
+
 const signupMiddleware = validateBody(authSchema);
 
 authRouter.post("/register", signupMiddleware, authControllers.register);
+
+authRouter.get("/verify/:verificationCode", authControllers.verify);
+
+authRouter.post("/verify", verifyEmailMiddleware, authControllers.resendVerify);
 
 authRouter.post("/login", signupMiddleware, authControllers.login);
 

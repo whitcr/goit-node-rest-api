@@ -10,3 +10,7 @@ export const updateSubSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
   subscription: Joi.string().valid("starter", "pro", "business").required(),
 });
+
+export const authEmailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required(),
+});
